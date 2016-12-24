@@ -6,7 +6,6 @@ function log (s) {
 	console.log((Date.now() / 1000) + ": " + s);
 }
 
-// Diffie-Hellman processor and parser
 function DiffieHellman (reciever) {
 	this.reciever = reciever;
 	
@@ -20,7 +19,6 @@ function DiffieHellman (reciever) {
 	
 	log("Initializing server...");
 	
-	// Init server
 	this.server = net.createServer((socket) => {
 		this.socket = socket;
 		
@@ -34,7 +32,6 @@ function DiffieHellman (reciever) {
 	log("Done!\n");
 	log("Initializing socket...");
 	
-	// Init socket
 	this.socket = new net.Socket();
 	
 	this.socket.connect(DH_PORT, this.reciever);
@@ -46,7 +43,6 @@ function DiffieHellman (reciever) {
 	log("Done!");
 }
 
-// Send data
 DiffieHellman.prototype.rawSend = function (data, callback) {
 	if (this.socket) {
 		this.socket.write(Buffer.from(Array.from(Buffer.from(data)).concat([255])), callback);
@@ -55,7 +51,6 @@ DiffieHellman.prototype.rawSend = function (data, callback) {
 	}
 };
 
-// Initialization
 DiffieHellman.prototype.init = function (callback) {
 	this.initCallback = () => {
 		this.initialized = true;
@@ -133,7 +128,6 @@ DiffieHellman.prototype.send = function (data, callback) {
 
 var diffieHellman;
 
-// Parser for the interface
 function parse (line, callback) {
 	var args = line.split(" ");
 	var cmd = args.shift();
