@@ -1,5 +1,7 @@
 const net = require("net");
 
+const util = require("./util.js");
+
 const DH_PORT = 62720;
 
 function log (s) {
@@ -9,11 +11,9 @@ function log (s) {
 function DiffieHellman (reciever) {
 	this.reciever = reciever;
 	
-	this.generator = 3;
-	this.modulus = 17;
+	this.modulus = util.getPrime();
 	
 	this.secret = Math.floor(Math.random() * this.modulus);
-	this.remainder = Math.pow(this.generator, this.secret) % this.modulus;
 	
 	this.initialized = false;
 	
@@ -58,13 +58,11 @@ DiffieHellman.prototype.init = function (callback) {
 		callback();
 	};
 	
-	log("Sending generator, modulus, and remainder...");
+	var generator = util.getPrime();
 	
-	this.rawSend(this.generator.toString(), () => {});
+	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
-	this.rawSend(this.remainder.toString(), () => {});
-	
-	log("Done!");
+	this.rawSend((Math.pow(generator, this.secret) % this.modulus).toString(), () => {});
 };
 
 DiffieHellman.prototype.handleResponse = function (response, callback) {
@@ -72,48 +70,24 @@ DiffieHellman.prototype.handleResponse = function (response, callback) {
 	
 	if (this.initialized) {
 		log("Got message!");
-		log(this.decrypt(data[0]));
+		log(util.decrypt(data[0]));
 		
 		return callback();
 	}
 	
 	if (data.length > 1) {
-		log("Got generator, modulus, and remainder!");
+		this.secret = Math.floor(Math.random() * +data[1]);
 		
-		this.generator = +data[0];
-		this.modulus = +data[1];
-		this.secret = Math.floor(Math.random() * this.modulus);
-		
-		var remainder = Math.pow(this.generator, this.secret) % this.modulus;
-		
-		log("Sending remainder...");
+		var remainder = Math.pow(+data[0], this.secret) % +data[1];
 		
 		this.rawSend(remainder.toString(), () => {});
 		
-		log("Done!\n");
-		log("Computing shared secret...");
-		
-		this.sharedSecret = Math.pow(remainder, this.secret) % this.modulus;
-		
-		log("Done!");
+		this.sharedSecret = Math.pow(remainder, this.secret) % +data[1];
 	} else {
-		log("Got remainder!");
-		log("Computing shared secret...");
-		
 		this.sharedSecret = Math.pow(+data[0], this.secret) % this.modulus;
-		
-		log("Done!");
 	}
 	
 	this.initCallback();
-};
-
-DiffieHellman.prototype.encrypt = function (data) {
-	return data + this.sharedSecret;
-};
-
-DiffieHellman.prototype.decrypt = function (data) {
-	return data;
 };
 
 DiffieHellman.prototype.send = function (data, callback) {
@@ -123,7 +97,7 @@ DiffieHellman.prototype.send = function (data, callback) {
 		return callback();
 	}
 	
-	this.rawSend(this.encrypt(data), callback);
+	this.rawSend(util.encrypt(data), callback);
 };
 
 var diffieHellman;
