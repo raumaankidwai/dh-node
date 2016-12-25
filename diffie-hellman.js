@@ -59,7 +59,7 @@ DiffieHellman.prototype.init = function (callback) {
 	};
 	
 	var generator = util.getRandomPrime();
-	console.log(generator + " " + this.modulus);
+	
 	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
 	this.rawSend((Math.pow(generator, this.secret) % this.modulus).toString(), () => {});
@@ -67,7 +67,7 @@ DiffieHellman.prototype.init = function (callback) {
 
 DiffieHellman.prototype.handleResponse = function (response, callback) {
 	var data = (Array.from(response).join(",") + ",").split("255,").map(cur => cur.substr(0, cur.length - 1).split(",")).filter(cur => cur.join("").length).map(cur => Buffer.from(cur).toString());
-	
+	console.log(data.join(" "));
 	if (this.initialized) {
 		log("Got message!");
 		log(util.decrypt(data[0]));
