@@ -25,7 +25,7 @@ function DiffieHellman (reciever, callback) {
 		socket.on("data", (data) => {
 			this.handleResponse(data, () => {});
 		});
-		
+		log("connected");
 		this.init(callback);
 	});
 	
