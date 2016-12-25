@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 var util = {
 	encrypt: (data, key) => {
 		return data + key;
