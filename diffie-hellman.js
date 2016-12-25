@@ -59,7 +59,7 @@ DiffieHellman.prototype.init = function (callback) {
 	};
 	
 	var generator = util.getRandomPrime();
-	console.log(this.secret);
+	console.log(Math.pow(generator, this.secret));
 	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
 	this.rawSend((Math.pow(generator, this.secret) % this.modulus).toString(), () => {});
