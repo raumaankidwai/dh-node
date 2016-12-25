@@ -20,6 +20,7 @@ var util = {
 		return true;
 	},
 	
+	getRandom16: () => crypto.randomBytes(2).readUInt32BE(0),
 	getRandom32: () => crypto.randomBytes(4).readUInt32BE(0),
 	getRandomPrime: () => {
 		var n;
