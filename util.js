@@ -27,6 +27,24 @@ var util = {
 		while (!util.isPrime(n = util.getRandom32()));
 		
 		return n;
+	},
+	
+	largePowerMod: (a, b, c) => {
+		if (b === 0) {
+			return 1;
+		}
+		
+		a %= c;
+		
+		if (b === 1) {
+			return a;
+		}
+		
+		if (b % 2) {
+			return a * util.largePowerMod(a * a, (b - 1) / 2, c) % c;
+		}
+		
+		return util.largePowerMod(a * a, b / 2, c) % c;
 	}
 };
 
