@@ -58,11 +58,8 @@ DiffieHellman.prototype.init = function (callback) {
 		callback();
 	};
 	
-	var generator = util.getRandomPrime();
-	console.log(Math.pow(generator, this.secret));
-	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
-	this.rawSend((Math.pow(generator, this.secret) % this.modulus).toString(), () => {});
+	this.rawSend((Math.pow(2, this.secret) % this.modulus).toString(), () => {});
 };
 
 DiffieHellman.prototype.handleResponse = function (response, callback) {
@@ -76,13 +73,13 @@ DiffieHellman.prototype.handleResponse = function (response, callback) {
 	}
 	
 	if (data.length > 1) {
-		this.secret = Math.floor(Math.random() * +data[1]);
+		this.secret = Math.floor(Math.random() * +data[0]);
 		
-		var remainder = Math.pow(+data[0], this.secret) % +data[1];
+		var remainder = Math.pow(2, this.secret) % +data[0];
 		
 		this.rawSend(remainder.toString(), () => {});
 		
-		this.sharedSecret = Math.pow(remainder, this.secret) % +data[1];
+		this.sharedSecret = Math.pow(remainder, this.secret) % +data[0];
 	} else {
 		this.sharedSecret = Math.pow(+data[0], this.secret) % this.modulus;
 	}
