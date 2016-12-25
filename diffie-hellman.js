@@ -53,14 +53,12 @@ DiffieHellman.prototype.rawSend = function (data, callback) {
 
 DiffieHellman.prototype.init = function (callback) {
 	this.initCallback = () => {
-//		this.initialized = true;
-		log("Shared secret: " + this.sharedSecret);
+		this.initialized = true;
+		log("Done!");
 		callback();
 	};
 	
 	var generator = util.getRandom16();
-	
-	log(generator + " " + this.modulus + " " + this.secret + " " + util.largePowerMod(generator, this.secret, this.modulus));
 	
 	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
@@ -82,7 +80,7 @@ DiffieHellman.prototype.handleResponse = function (response, callback) {
 		
 		var remainder = util.largePowerMod(+data[0], secret, +data[1]);
 		this.sharedSecret = util.largePowerMod(+data[2], secret, +data[1]);
-		log(secret + " " + remainder);
+		
 		this.rawSend(remainder.toString(), () => {});
 	} else {
 		this.sharedSecret = util.largePowerMod(+data[0], this.secret, this.modulus);
