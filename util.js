@@ -1,6 +1,6 @@
-module.exports = {
+var util = {
 	encrypt: (data, key) => {
-		return data + this.sharedSecret;
+		return data + key;
 	},
 	decrypt: (data, key) => {
 		return data;
@@ -22,8 +22,10 @@ module.exports = {
 	getRandomPrime: () => {
 		var n;
 		
-		while (!this.isPrime(n = this.getRandom32()));
+		while (!util.isPrime(n = util.getRandom32()));
 		
 		return n;
 	}
 };
+
+module.exports = util;
