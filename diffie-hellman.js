@@ -20,19 +20,15 @@ function DiffieHellman (reciever, callback) {
 	log("Initializing server...");
 	
 	this.server = net.createServer((socket) => {
-		this.socket = socket;
-		
 		socket.on("data", (data) => {
 			this.handleResponse(data, () => {});
 		});
-		log("connected");
-		this.init(callback);
 	});
 	
 	this.server.listen(DH_PORT, "0.0.0.0");
 	
 	log("Done!\n");
-/*	log("Initializing socket...");
+	log("Initializing socket...");
 	
 	this.socket = new net.Socket();
 	
@@ -43,7 +39,7 @@ function DiffieHellman (reciever, callback) {
 	});
 	
 	log("Done!");
-*/}
+}
 
 DiffieHellman.prototype.rawSend = function (data, callback) {
 	if (this.socket) {
