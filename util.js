@@ -21,11 +21,10 @@ var util = {
 	},
 	
 	getRandom16: () => crypto.randomBytes(2).readUInt16BE(0),
-	getRandom32: () => crypto.randomBytes(4).readUInt32BE(0),
 	getRandomPrime: () => {
 		var n;
 		
-		while (!util.isPrime(n = util.getRandom32()));
+		while (!util.isPrime(n = util.getRandom16()));
 		
 		return n;
 	},
