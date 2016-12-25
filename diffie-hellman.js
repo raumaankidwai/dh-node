@@ -53,7 +53,7 @@ DiffieHellman.prototype.rawSend = function (data, callback) {
 
 DiffieHellman.prototype.init = function (callback) {
 	this.initCallback = () => {
-		this.initialized = true;
+//		this.initialized = true;
 		log("Shared secret: " + this.sharedSecret);
 		callback();
 	};
