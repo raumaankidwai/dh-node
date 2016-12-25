@@ -82,7 +82,7 @@ DiffieHellman.prototype.handleResponse = function (response, callback) {
 		
 		var remainder = util.largePowerMod(+data[0], secret, +data[1]);
 		this.sharedSecret = util.largePowerMod(remainder, secret, +data[1]);
-		
+		log(remainder);
 		this.rawSend(remainder.toString(), () => {});
 	} else {
 		this.sharedSecret = util.largePowerMod(+data[0], this.secret, this.modulus);
