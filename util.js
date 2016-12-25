@@ -5,7 +5,25 @@ module.exports = {
 	decrypt: (data, key) => {
 		return data;
 	},
-	getPrime = () => {
-		return 17;
+	
+	isPrime: (n) => {
+		var i = 1, s = Math.sqrt(n);
+		
+		for (; ++i < s;) {
+			if (!(n % i)) {
+				return false;
+			}
+		}
+		
+		return true;
+	},
+	
+	getRandom32: () => crypto.randomBytes(4).readUInt32BE(0),
+	getPrime: () => {
+		var n;
+		
+		while (!this.isPrime(n = this.getRandom32()));
+		
+		return n;
 	}
 };
