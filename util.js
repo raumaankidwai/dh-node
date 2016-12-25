@@ -19,7 +19,7 @@ module.exports = {
 	},
 	
 	getRandom32: () => crypto.randomBytes(4).readUInt32BE(0),
-	getPrime: () => {
+	getRandomPrime: () => {
 		var n;
 		
 		while (!this.isPrime(n = this.getRandom32()));
