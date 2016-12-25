@@ -60,6 +60,8 @@ DiffieHellman.prototype.init = function (callback) {
 	
 	var generator = util.getRandom16();
 	
+	log(generator + " " + this.modulus + " " + util.largePowerMod(generator, this.secret, this.modulus));
+	
 	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
 	this.rawSend(util.largePowerMod(generator, this.secret, this.modulus).toString(), () => {});
