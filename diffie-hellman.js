@@ -11,7 +11,7 @@ function log (s) {
 function DiffieHellman (reciever) {
 	this.reciever = reciever;
 	
-	this.modulus = util.getPrime();
+	this.modulus = util.getRandomPrime();
 	
 	this.secret = Math.floor(Math.random() * this.modulus);
 	
@@ -58,7 +58,7 @@ DiffieHellman.prototype.init = function (callback) {
 		callback();
 	};
 	
-	var generator = util.getPrime();
+	var generator = util.getRandomPrime();
 	
 	this.rawSend(generator.toString(), () => {});
 	this.rawSend(this.modulus.toString(), () => {});
