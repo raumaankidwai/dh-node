@@ -8,7 +8,7 @@ function log (s) {
 	console.log((Date.now() / 1000) + ": " + s);
 }
 
-function DiffieHellman (reciever, callback) {
+function DiffieHellman (reciever) {
 	this.reciever = reciever;
 	
 	this.modulus = util.getRandomPrime();
@@ -20,6 +20,8 @@ function DiffieHellman (reciever, callback) {
 	log("Initializing server...");
 	
 	this.server = net.createServer((socket) => {
+		this.socket = socket;
+		
 		socket.on("data", (data) => {
 			this.handleResponse(data, () => {});
 		});
@@ -105,9 +107,14 @@ function parse (line, callback) {
 	
 	switch (cmd) {
 		case "init":
+			log("Initializing new DiffieHellman object...");
+			
+			diffieHellman = new DiffieHellman(args[0]);
+			
+			log("Done!\n");
 			log(`Initializing Diffie-Hellman protocol (reciever ${args[0]})...\n`);
 			
-			diffieHellman = new DiffieHellman(args[0], callback);
+			diffieHellman.init(callback);
 		break; case "send":
 			log(`Sending data ${args[0]} with Diffie-Hellman protocol to ${diffieHellman.reciever}...`);
 			
