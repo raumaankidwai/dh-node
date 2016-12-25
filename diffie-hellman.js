@@ -30,7 +30,7 @@ function DiffieHellman (reciever) {
 	this.server.listen(DH_PORT, "0.0.0.0");
 	
 	log("Done!\n");
-	log("Initializing socket...");
+/*	log("Initializing socket...");
 	
 	this.socket = new net.Socket();
 	
@@ -41,7 +41,7 @@ function DiffieHellman (reciever) {
 	});
 	
 	log("Done!");
-}
+*/}
 
 DiffieHellman.prototype.rawSend = function (data, callback) {
 	if (this.socket) {
