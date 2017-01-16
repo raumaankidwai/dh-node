@@ -1,51 +1,14 @@
 const crypto = require("crypto");
+const bi = require("./bitint.js");
 
 var util = {
 	encrypt: (data, key) => {
-		return data + key;
+		return data;
 	},
 	decrypt: (data, key) => {
 		return data;
 	},
-	
-	isPrime: (n) => {
-		var i = 1, s = Math.sqrt(n);
-		
-		for (; ++i < s;) {
-			if (!(n % i)) {
-				return false;
-			}
-		}
-		
-		return true;
-	},
-	
-	getRandom16: () => crypto.randomBytes(2).readUInt16BE(0),
-	getRandomPrime: () => {
-		var n;
-		
-		while (!util.isPrime(n = util.getRandom16()));
-		
-		return n;
-	},
-	
-	largePowerMod: (a, b, c) => {
-		if (b === 0) {
-			return 1;
-		}
-		
-		a %= c;
-		
-		if (b === 1) {
-			return a;
-		}
-		
-		if (b % 2) {
-			return a * util.largePowerMod(a * a, (b - 1) / 2, c) % c;
-		}
-		
-		return util.largePowerMod(a * a, b / 2, c) % c;
-	}
+	bi: bi
 };
 
 module.exports = util;
