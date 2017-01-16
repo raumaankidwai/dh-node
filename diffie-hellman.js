@@ -1,8 +1,16 @@
+/**
+	Required methods from bi:
+		bi.getRandomPrime(bits)
+		bi.getRandomLT(upperBound)
+		bi.lpm(a, b, c)
+*/
+
 const net = require("net");
 
 const util = require("./util.js");
 
 const DH_PORT = 62720;
+const BITS = 16;
 
 function log (s) {
 	console.log((Date.now() / 1000) + ": " + s);
@@ -11,9 +19,9 @@ function log (s) {
 function DiffieHellman (reciever) {
 	this.reciever = reciever;
 	
-	this.modulus = util.getRandomPrime();
+	this.modulus = util.bi.getRandomPrime(BITS);
 	
-	this.secret = Math.floor(Math.random() * this.modulus);
+	this.secret = util.bi.getRandomLT(this.modulus);
 	
 	this.initialized = false;
 	
@@ -58,15 +66,17 @@ DiffieHellman.prototype.init = function (callback) {
 		callback();
 	};
 	
-	var generator = util.getRandom16();
+	var generator = util.bi.getRandomPrime(BITS);
 	
-	this.rawSend(generator.toString(), () => {});
-	this.rawSend(this.modulus.toString(), () => {});
-	this.rawSend(util.largePowerMod(generator, this.secret, this.modulus).toString(), () => {});
+	this.rawSend(Buffer.from(generator), () => {});
+	this.rawSend(Buffer.from(this.modulus), () => {});
+	this.rawSend(Buffer.from(util.bi.lpm(generator, this.secret, this.modulus)), () => {});
 };
 
 DiffieHellman.prototype.handleResponse = function (response, callback) {
-	var data = (Array.from(response).join(",") + ",").split("255,").map(cur => cur.substr(0, cur.length - 1).split(",")).filter(cur => cur.join("").length).map(cur => Buffer.from(cur).toString());
+	var data = /* split array on 255 to get bit arrays 
+	[1, 0, 1, 1, 255, 0, 0, 1, 0, 255] => [[1, 0, 1, 1], [0, 0, 1, 0]]
+	*/;
 	
 	if (this.initialized) {
 		log("Got message!");
@@ -76,14 +86,14 @@ DiffieHellman.prototype.handleResponse = function (response, callback) {
 	}
 	
 	if (data.length > 1) {
-		var secret = Math.floor(Math.random() * +data[1]);
+		var secret = util.bi.getRandomLT(data[1]);
 		
-		var remainder = util.largePowerMod(+data[0], secret, +data[1]);
-		this.sharedSecret = util.largePowerMod(+data[2], secret, +data[1]);
+		var remainder = util.bi.lpm(data[0], secret, data[1]);
+		this.sharedSecret = util.bi.lpm(data[2], secret, data[1]);
 		
-		this.rawSend(remainder.toString(), () => {});
+		this.rawSend(Buffer.from(remainder), () => {});
 	} else {
-		this.sharedSecret = util.largePowerMod(+data[0], this.secret, this.modulus);
+		this.sharedSecret = util.largePowerMod(data[0], this.secret, this.modulus);
 	}
 	
 	this.initCallback();
